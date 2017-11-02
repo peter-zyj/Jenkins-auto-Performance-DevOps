@@ -1,0 +1,12 @@
+// works for master jenkins, create file in master jenkins
+if(manager.build.result.isBetterOrEqualTo(hudson.model.Result.SUCCESS)) {
+
+        def file1 = new File('/cds-feature-build/slave10/result')
+	file1 << 'DevOps-Performance-Build#passed#\n'
+}
+else
+{
+	def file1 = new File('/cds-feature-build/slave10/result')
+	file1 << 'DevOps-Performance-Build#unpassed#\n'
+
+}

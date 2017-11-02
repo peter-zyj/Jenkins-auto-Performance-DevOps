@@ -1,0 +1,43 @@
+#!/usr/bin/python
+import os,sys,re
+
+dirname = "/cds-feature-build/slave10/releases"
+statFile = "/cds-feature-build/slave10/status"
+resFile = "/cds-feature-build/slave10/result"
+##~
+print "Started Post Build activity:: trigger the build"
+print "working dir::",os.getcwd()
+print "Slave node is ",os.popen("hostname").read()
+wkdir = os.getcwd()
+trigger = False
+#check file existance
+if os.path.exists(resFile):
+    with open(resFile,"r") as f1:
+        cont1=f1.read()
+    if "unpassed" in cont1:
+        trigger = True
+
+if trigger != False:
+
+    #start trigger
+
+    with open(statFile,"r") as f:
+        cont=f.read()
+
+    try:
+        buildHead = re.compile(r"(?<=Queue::).*?(?=@)").findall(cont)[0]
+    except:
+        buildHead = ""
+
+
+    if buildHead not in ["",[]]:
+        targetBuild = re.compile(r"%s::.*?(?=:)"%(buildHead)).findall(cont)[0]
+        os.popen("touch %s/*"%(dirname))
+
+
+    cont=cont.replace("Occupied","Idle")
+    with open(statFile,"w") as f:
+        f.write(cont)
+
+    print "Ended Post Build activity:: trigger the build"
+
